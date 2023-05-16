@@ -5,32 +5,40 @@ const pixelElts = document.getElementsByClassName('pixel');
 const scores = document.getElementById('scores');
 let startTime;
 let endTime;
-let matrixSize = 10;
+let matrixSize = 5;
 let scoreList = [];
 let leftClickEnabled = true;
 let palette;
 
 grid.addEventListener('click', function (event) {
     if (leftClickEnabled) {
-        showPixel();
-        paintPixel();
-        randPalette();
-        console.time('Temps de jeu');
-        startTime = Date.now();
-        console.log(`Partie lancée avec la palette ${palette} !`);
+        startGame();
         leftClickEnabled = false; // Désactiver le clic gauche
     }
 });
 
+function startGame() {
+    showPixel();
+    paintPixel();
+    randPalette();
+    console.time('Temps de jeu');
+    startTime = Date.now();
+    console.log(`Partie lancée avec la palette ${palette} !`);
+}
+
 grid.addEventListener('auxclick', (e) => {
     e.preventDefault();
+    resetGame()
+    leftClickEnabled = true; // Réactiver le clic gauche
+});
+
+function resetGame() {
     console.timeEnd('Temps de jeu');
     endTime = Date.now();
     console.clear();
     createMatrix(matrixSize);
     surveyMatrix = 0;
-    leftClickEnabled = true; // Réactiver le clic gauche
-});
+}
 
 grid.oncontextmenu = (e) => {
     e.preventDefault();
