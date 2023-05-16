@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #456;
+    color: #123;
+    font-family: 'Silkscreen', cursive;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    color: #fff;
+    font-size: 3.5vh;
+    margin: 0;
+    text-shadow: 2px 2px 0 #123;
+}
+
+h2{
+    margin:0;
+    text-shadow: 2px 2px 0 #123;
+}
+
+.container {
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.matrix {
+    aspect-ratio: 1;
+    background-color: #123;
+    position:relative;
+}
+
+.pixel {
+    aspect-ratio: 1;
+    cursor: crosshair;
+}
+
+.pixel:hover {
+    background-color: #fff;
+}
+
+#grille {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+}
+
+.rules {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 2.25vh;
+}
+
+#scores {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    text-align: end;
+    position: absolute;
+    top: 0;
+    left: 0;
+    translate: calc(-100% - 1rem);
+}
