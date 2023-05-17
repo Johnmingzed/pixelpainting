@@ -1,11 +1,11 @@
-let surveyMatrix = 0;
+let paintedPixels = 0;
 const grid = document.getElementById('grille');
 const gridSize = grid.clientWidth;
 const pixelElts = document.getElementsByClassName('pixel');
 const scores = document.getElementById('scores');
 let startTime;
 let endTime;
-let matrixSize = 10;
+let matrixSize = 5;
 let scoreList = [];
 let leftClickEnabled = true;
 let palette;
@@ -14,6 +14,7 @@ grid.addEventListener('click', function (event) {
     if (leftClickEnabled) {
         showPixel();
         paintPixel();
+        setPainted(event);
         randPalette();
         console.time('Temps de jeu');
         startTime = Date.now();
@@ -28,7 +29,7 @@ grid.addEventListener('auxclick', (e) => {
     endTime = Date.now();
     console.clear();
     createMatrix(matrixSize);
-    surveyMatrix = 0;
+    paintedPixels = 0;
     leftClickEnabled = true; // Réactiver le clic gauche
 });
 
@@ -55,11 +56,28 @@ function createMatrix(size) {
 // Coloriage à l'aide d'une boucle for of
 function showPixel() {
     Array.from(pixelElts).forEach((pixel) => {
-        // On passe en vert à l'entrer
+        // On passe en blanc à l'entrée
         pixel.addEventListener('mouseover', function (event) {
             event.target.style.backgroundColor = "#fff";
+            setPainted(event);
         });
     });
+}
+
+function setPainted(event) {
+    if (event.target.getAttribute('painted') != 'yes') {
+        paintedPixels++;
+        console.log(paintedPixels);
+        if (paintedPixels == pixelElts.length) {
+            console.timeEnd('Temps de jeu');
+            endTime = Date.now();
+            let time = endTime - startTime;
+            storeScores(time);
+            displayScores(storeScores);
+            alert('Gagné ! Vous avez mis ' + (time / 1000) + ' s.');
+        }
+        event.target.setAttribute('painted', 'yes');
+    }
 }
 
 function paintPixel() {
@@ -68,18 +86,6 @@ function paintPixel() {
         pixel.addEventListener('mouseleave', function (event) {
             rainbowPixel(event);
             //event.target.style.backgroundColor = "rgb(255,128,0)";
-            if (event.target.getAttribute('painted') != 'yes') {
-                surveyMatrix++;
-                if (surveyMatrix == pixelElts.length) {
-                    console.timeEnd('Temps de jeu');
-                    endTime = Date.now();
-                    let time = endTime - startTime;
-                    storeScores(time);
-                    displayScores(storeScores);
-                    alert('Gagné ! Vous avez mis ' + (time / 1000) + ' s.');
-                }
-            }
-            event.target.setAttribute('painted', 'yes');
         });
     });
 }
