@@ -12,26 +12,35 @@ let palette;
 
 grid.addEventListener('click', function (event) {
     if (leftClickEnabled) {
-        showPixel();
-        paintPixel();
-        setPainted(event);
-        randPalette();
-        console.time('Temps de jeu');
-        startTime = Date.now();
-        console.log(`Partie lancée avec la palette ${palette} !`);
+        startGame(event);
         leftClickEnabled = false; // Désactiver le clic gauche
     }
 });
 
+function startGame(event) {
+    showPixel();
+    paintPixel();
+        setPainted(event);
+    randPalette();
+    console.time('Temps de jeu');
+    startTime = Date.now();
+    console.log(`Partie lancée avec la palette ${palette} !`);
+}
+
 grid.addEventListener('auxclick', (e) => {
     e.preventDefault();
+    resetGame()
+    leftClickEnabled = true; // Réactiver le clic gauche
+});
+
+function resetGame() {
     console.timeEnd('Temps de jeu');
     endTime = Date.now();
     console.clear();
     createMatrix(matrixSize);
     paintedPixels = 0;
     leftClickEnabled = true; // Réactiver le clic gauche
-});
+}
 
 grid.oncontextmenu = (e) => {
     e.preventDefault();
