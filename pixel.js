@@ -1,3 +1,9 @@
+/*******************************************************************************
+ *
+ * Initialisation des paramètres de jeu
+ *
+*******************************************************************************/
+
 let paintedPixels = 0;
 const grid = document.getElementById('grille');
 const gridSize = grid.clientWidth;
@@ -10,6 +16,15 @@ let scoreList = [];
 let leftClickEnabled = true;
 let palette;
 
+
+
+
+/*******************************************************************************
+ *
+ * Initialisation des écouteurs
+ *
+*******************************************************************************/
+
 grid.addEventListener('click', function (event) {
     if (leftClickEnabled) {
         startGame(event);
@@ -17,22 +32,38 @@ grid.addEventListener('click', function (event) {
     }
 });
 
-function startGame(event) {
-    showPixel();
-    paintPixel();
-        setPainted(event);
-    randPalette();
-    console.time('Temps de jeu');
-    startTime = Date.now();
-    console.log(`Partie lancée avec la palette ${palette} !`);
-}
-
 grid.addEventListener('auxclick', (e) => {
     e.preventDefault();
     resetGame()
     leftClickEnabled = true; // Réactiver le clic gauche
 });
 
+
+
+
+/*******************************************************************************
+ *
+ * Gestion de la partie
+ *
+*******************************************************************************/
+
+/**
+ * Lance une partie
+ * @param {*} event 
+ */
+function startGame(event) {
+    showPixel();
+    paintPixel();
+    setPainted(event);
+    randPalette();
+    console.time('Temps de jeu');
+    startTime = Date.now();
+    console.log(`Partie lancée avec la palette ${palette} !`);
+}
+
+/**
+ * Réinitialise la partie
+ */
 function resetGame() {
     console.timeEnd('Temps de jeu');
     endTime = Date.now();
@@ -42,12 +73,66 @@ function resetGame() {
     leftClickEnabled = true; // Réactiver le clic gauche
 }
 
+/**
+ * Surveille l'état de la grille :
+ * Arrête la partie en cas de victoire et lance l'affichage des scores
+ * @param {*} event 
+ */
+function winGame(event) {
+    if (paintedPixels == pixelElts.length) {
+        rainbowPixel(event);
+        console.timeEnd('Temps de jeu');
+        endTime = Date.now();
+        let time = endTime - startTime;
+        storeScores(time);
+        displayScores(storeScores);
+        setTimeout(() => alert('Gagné ! Vous avez mis ' + (time / 1000) + ' s.'), 150);
+    }
+}
+
+/**
+ * Enregistre les scores dans une liste des 13 meilleurs scores
+ * @param int float 
+ */
+function storeScores(float) {
+    scoreList.push(float / 1000);
+    scoreList.sort();
+    const newScorList = scoreList.slice(0, 13);
+    scoreList = newScorList;
+}
+
+/**
+ * Affiche la liste des scores
+ */
+function displayScores(array) {
+    scores.replaceChildren();
+    let title = document.createElement('h2');
+    title.textContent = 'Scores';
+    scores.appendChild(title);
+    scoreList.forEach((scoreValue) => {
+        let score = document.createElement('p');
+        score.textContent = scoreValue + 's';
+        scores.appendChild(score);
+    });
+}
+
+
+
+
+/*******************************************************************************
+ *
+ * Gestion de la grille
+ *
+*******************************************************************************/
+
 grid.oncontextmenu = (e) => {
     e.preventDefault();
 }
 
-createMatrix(matrixSize);
-
+/**
+ * Construit une grille carré de n pixels de côté
+ * @param int size 
+ */
 function createMatrix(size) {
     console.log({ gridSize });
     console.time('Temps de rendu de la grille');
@@ -61,8 +146,24 @@ function createMatrix(size) {
     console.timeEnd('Temps de rendu de la grille');
 }
 
+function randPalette() {
+    palette = Math.ceil(Math.random() * 3);
+}
 
-// Coloriage à l'aide d'une boucle for of
+createMatrix(matrixSize); // Création automatique d'une première grille avec les paramètres standards
+
+
+
+
+/*******************************************************************************
+ *
+ * Gestion des pixels
+ *
+*******************************************************************************/
+
+/**
+ * Affiche en blanc le pixel ciblé
+ */
 function showPixel() {
     Array.from(pixelElts).forEach((pixel) => {
         // On passe en blanc à l'entrée
@@ -73,60 +174,35 @@ function showPixel() {
     });
 }
 
-function setPainted(event) {
-    if (event.target.getAttribute('painted') != 'yes') {
-        paintedPixels++;
-        console.log(paintedPixels);
-        if (paintedPixels == pixelElts.length) {
-            console.timeEnd('Temps de jeu');
-            endTime = Date.now();
-            let time = endTime - startTime;
-            storeScores(time);
-            displayScores(storeScores);
-            alert('Gagné ! Vous avez mis ' + (time / 1000) + ' s.');
-        }
-        event.target.setAttribute('painted', 'yes');
-    }
-}
-
+/**
+ * Colore le pixel ciblé à la sortie
+ */
 function paintPixel() {
     Array.from(pixelElts).forEach((pixel) => {
         // On passe en rouge à la sortie
         pixel.addEventListener('mouseleave', function (event) {
             rainbowPixel(event);
-            //event.target.style.backgroundColor = "rgb(255,128,0)";
         });
     });
 }
 
-// On affiche les coordonnées du pointer durant le survol à l'intérieur de l'élement survolé
-function displayLocation() {
-    Array.from(pixelElts).forEach((pixel) => {
-        pixel.addEventListener('mousemove', function (event) {
-            this.textContent = event.clientX + " " + event.clientY;
-        });
-    });
+/**
+ * Ajoute un attribut 'painted' au pixel ciblé
+ * @param {*} event
+ */
+function setPainted(event) {
+    if (event.target.getAttribute('painted') != 'yes') {
+        paintedPixels++;
+        console.log(paintedPixels);
+        event.target.setAttribute('painted', 'yes');
+        winGame(event);
+    }
 }
 
-function storeScores(float) {
-    scoreList.push(float / 1000);
-    scoreList.sort();
-    const newScorList = scoreList.slice(0, 13);
-    scoreList = newScorList;
-}
-
-function displayScores(array) {
-    scores.replaceChildren();
-    let title = document.createElement('h2');
-    title.textContent = 'Scores';
-    scores.appendChild(title);
-    scoreList.forEach((scoreValue) => {
-        let score = document.createElement('p');
-        score.textContent = scoreValue + 's';
-        scores.appendChild(score);
-    });
-}
-
+/**
+ * Attribue au pixel ciblé une couleur RGB en fonction de sa position dans la grille
+ * @param {*} event 
+ */
 function rainbowPixel(event) {
     let color1 = Math.floor(event.target.offsetTop / gridSize * 255);
     let color2 = Math.floor(event.target.offsetLeft / gridSize * 255);
@@ -144,6 +220,20 @@ function rainbowPixel(event) {
     }
 }
 
-function randPalette() {
-    palette = Math.ceil(Math.random() * 3);
+
+
+
+/*******************************************************************************
+ *
+ * Functions de débogage
+ *
+*******************************************************************************/
+
+// On affiche les coordonnées du pointer durant le survol à l'intérieur de l'élement survolé
+function displayLocation() {
+    Array.from(pixelElts).forEach((pixel) => {
+        pixel.addEventListener('mousemove', function (event) {
+            this.textContent = event.clientX + " " + event.clientY;
+        });
+    });
 }
