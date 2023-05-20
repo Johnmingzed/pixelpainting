@@ -5,13 +5,14 @@
 *******************************************************************************/
 
 let paintedPixels = 0;
+let round = 0;
 const grid = document.getElementById('grille');
 const gridSize = grid.clientWidth;
 const pixelElts = document.getElementsByClassName('pixel');
 const scores = document.getElementById('scores');
 let startTime;
 let endTime;
-let matrixSize = 5;
+let matrixSize = 4;
 let scoreList = [];
 let leftClickEnabled = true;
 let palette;
@@ -95,8 +96,8 @@ function winGame(event) {
  * @param int float 
  */
 function storeScores(float) {
-    scoreList.push(float / 1000);
-    scoreList.sort();
+    scoreList.push({ 'score': float / 1, 'round': ++round });
+    scoreList.sort((a, b) => a.score - b.score);
     const newScorList = scoreList.slice(0, 13);
     scoreList = newScorList;
 }
@@ -111,7 +112,10 @@ function displayScores(array) {
     scores.appendChild(title);
     scoreList.forEach((scoreValue) => {
         let score = document.createElement('p');
-        score.textContent = scoreValue + 's';
+        score.textContent = scoreValue.score + ' ms';
+        if (scoreValue.round == scoreList.length) {
+            score.setAttribute('class', 'last_round');
+        }
         scores.appendChild(score);
     });
 }

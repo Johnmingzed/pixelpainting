@@ -20,8 +20,8 @@ h1 {
     text-shadow: 2px 2px 0 #123;
 }
 
-h2{
-    margin:0;
+h2 {
+    margin: 0;
     text-shadow: 2px 2px 0 #123;
 }
 
@@ -33,7 +33,7 @@ h2{
 .matrix {
     aspect-ratio: 1;
     background-color: #123;
-    position:relative;
+    position: relative;
 }
 
 .pixel {
@@ -66,4 +66,8 @@ h2{
     top: 0;
     left: 0;
     translate: calc(-100% - 1rem);
+}
+
+.last_round {
+    color: #fc2;
 }
