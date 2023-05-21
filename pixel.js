@@ -10,9 +10,11 @@ const grid = document.getElementById('grille');
 const gridSize = grid.clientWidth;
 const pixelElts = document.getElementsByClassName('pixel');
 const scores = document.getElementById('scores');
+const difficultySlider = document.getElementById('setDifficulty')
+const displaySize = document.getElementById('size');
 let startTime;
 let endTime;
-let matrixSize = 4;
+let matrixSize = 5;
 let scoreList = [];
 let leftClickEnabled = true;
 let palette;
@@ -37,6 +39,12 @@ grid.addEventListener('auxclick', (e) => {
     e.preventDefault();
     resetGame()
     leftClickEnabled = true; // Réactiver le clic gauche
+});
+
+difficultySlider.addEventListener('change', (e) => {
+    matrixSize = difficultySlider.value;
+    displaySize.textContent = matrixSize + 'x' + matrixSize + ' pixels';
+    createMatrix(matrixSize);
 });
 
 
@@ -92,11 +100,12 @@ function winGame(event) {
 }
 
 /**
- * Enregistre les scores dans une liste des 13 meilleurs scores
- * @param int float 
+ * Enregistre les scores sous forme d'ojbet { score: round },
+ * tri les scores de manière creoissante et conserve 13 meilleurs
+ * @param int value 
  */
-function storeScores(float) {
-    scoreList.push({ 'score': float / 1, 'round': ++round });
+function storeScores(value) {
+    scoreList.push({ 'score': value / 1, 'round': ++round });
     scoreList.sort((a, b) => a.score - b.score);
     const newScorList = scoreList.slice(0, 13);
     scoreList = newScorList;
