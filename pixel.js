@@ -65,6 +65,7 @@ function startGame(event) {
     paintPixel();
     setPainted(event);
     randPalette();
+    // displayColor();
     console.time('Temps de jeu');
     startTime = Date.now();
     console.log(`Partie lancée avec la palette ${palette} !`);
@@ -247,6 +248,14 @@ function displayLocation() {
     Array.from(pixelElts).forEach((pixel) => {
         pixel.addEventListener('mousemove', function (event) {
             this.textContent = event.clientX + " " + event.clientY;
+        });
+    });
+}
+
+function displayColor() {
+    Array.from(pixelElts).forEach((pixel) => {
+        pixel.addEventListener('mouseleave', function (event) {
+            this.textContent = event.target.style.backgroundColor;
         });
     });
 }
